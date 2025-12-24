@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BTX AudioLaudo — Audiometria + Agenda</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- jsPDF (ideal: hospedar local no repo pra funcionar offline 100%) -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">🎧</div>
+      <div>
+        <div class="title">BTX AudioLaudo</div>
+        <div class="subtitle">Audiometria tonal + Agenda offline</div>
+      </div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="tab-audio">Audiograma</button>
+      <button class="tab" data-tab="tab-agenda">Agenda</button>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- ===== TAB AUDIO ===== -->
+    <section id="tab-audio" class="panel active">
+
+      <div class="grid-2">
+        <div class="card">
+          <h2>Dados do paciente</h2>
+
+          <div class="row">
+            <label>Paciente</label>
+            <input id="paciente" type="text" placeholder="Nome completo" />
+          </div>
+
+          <div class="row">
+            <label>Data</label>
+            <input id="data" type="date" />
+          </div>
+
+          <div class="hint">
+            Dica: dá pra usar a Agenda pra preencher o paciente e a data com 1 toque.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Resumo</h2>
+          <div class="pill" id="ptaOD">PTA OD: —</div>
+          <div class="pill" id="ptaOE">PTA OE: —</div>
+
+          <div class="actions">
+            <button class="btn" id="btnPDF">Gerar PDF</button>
+            <button class="btn ghost" id="btnLimpar">Limpar</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Limiar por frequência (dB HL)</h2>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Hz</th>
+                <th>OD</th>
+                <th>OE</th>
+              </tr>
+            </thead>
+            <tbody id="tabela"></tbody>
+          </table>
+        </div>
+        <div class="hint">
+          Passo padrão: 5 dB. Se quiser, você pode digitar qualquer valor (o app limita entre -10 e 120).
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Audiograma</h2>
+        <canvas id="grafico" width="980" height="420"></canvas>
+        <div class="hint">
+          OD = círculo (O) | OE = X. (Próximo upgrade: símbolos de mascaramento &lt; &gt;).
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Interpretação (editável)</h2>
+        <textarea id="interpretacao" rows="10" placeholder="Escreva sua interpretação..."></textarea>
+        <div class="footer-note">
+          ✨ Saudações aos nossos amigos fonoaudiólogos — tecnologia a favor da audição ✨
+          <br/>Os dados ficam salvos localmente neste dispositivo.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB AGENDA ===== -->
+    <section id="tab-agenda" class="panel">
+      <div class="card">
+        <h2>Agenda (offline)</h2>
+
+        <div class="grid-4">
+          <div class="row">
+            <label>Data</label>
+            <input id="agData" type="date" />
+          </div>
+
+          <div class="row">
+            <label>Hora</label>
+            <input id="agHora" type="time" />
+          </div>
+
+          <div class="row">
+            <label>Paciente</label>
+            <input id="agPaciente" type="text" placeholder="Nome" />
+          </div>
+
+          <div class="row">
+            <label>Tipo</label>
+            <select id="agTipo">
+              <option value="Audiometria">Audiometria</option>
+              <option value="Retorno">Retorno</option>
+              <option value="Laudo">Laudo</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-4">
+          <div class="row">
+            <label>Telefone (opcional)</label>
+            <input id="agFone" type="tel" placeholder="Ex: 5591999999999" />
+          </div>
+
+          <div class="row span-3">
+            <label>Observação</label>
+            <input id="agObs" type="text" placeholder="Ex: criança, repetir 3k/6k, etc." />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="btnAgAdd">Adicionar</button>
+          <button class="btn ghost" id="btnAgPdf">PDF do dia</button>
+          <button class="btn danger" id="btnAgClear">Limpar agenda</button>
+        </div>
+
+        <div class="hint">
+          Dica: clique em um item da lista pra “carregar” o paciente e a data direto no Audiograma.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Lista do dia</h2>
+        <div id="agLista" class="list"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
